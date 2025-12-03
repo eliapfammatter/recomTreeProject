@@ -1,12 +1,14 @@
+package server;
+
 import java.io.*;
 import java.net.*;
 import java.util.Scanner;
 
-public class server {
+public class Server {
     public static void main(String[] args) {
         try {
             ServerSocket server = new ServerSocket(45000);
-            System.out.println("Server is listening on port 45000");
+            System.out.println("server is listening on port 45000");
             Socket exchangeSocket = server.accept();
             System.out.println("We got a connection");
 
@@ -30,7 +32,7 @@ public class server {
             DataInputStream dis = new DataInputStream(exchangeSocket.getInputStream());
             FileOutputStream fos = new FileOutputStream("c://received//DataOutputStream.png");
 
-            System.out.println("Client connected");
+            System.out.println("client connected");
 
             int bytesRead;
             byte[] buffer = new byte[4096];
