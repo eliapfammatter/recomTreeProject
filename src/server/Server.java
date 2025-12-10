@@ -1,50 +1,28 @@
 package server;
 
-import java.io.*;
-import java.net.*;
-import java.util.Scanner;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 public class Server {
+    private static final int PORT = 45000;
+
     public static void main(String[] args) {
-        try {
-            ServerSocket server = new ServerSocket(45000);
-            System.out.println("server is listening on port 45000");
-            Socket exchangeSocket = server.accept();
-            System.out.println("We got a connection");
+        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+            System.out.println("RecomTree Server listening on port " + PORT + "...");
 
-            //inputstream
-            InputStream inStream = exchangeSocket.getInputStream();
-            InputStreamReader reader = new InputStreamReader(inStream);
-            BufferedReader buffin = new BufferedReader(reader);
-            //outputstream
-            OutputStream outStream = exchangeSocket.getOutputStream();
-            PrintWriter out = new PrintWriter(outStream, true);
-            //read from socket
-             String line = buffin.readLine();
-             System.out.println(line);
-            //write to socket
-            Scanner sc = new Scanner(System.in);
-            System.out.println("Your message :");
-            String message = sc.nextLine();
-            out.println(message);
+            while (true) {
+                // Listen for a new connection
+                Socket clientSocket = serverSocket.accept();
+                System.out.println("New client connected: " + clientSocket.getInetAddress());
 
-
-            DataInputStream dis = new DataInputStream(exchangeSocket.getInputStream());
-            FileOutputStream fos = new FileOutputStream("c://received//DataOutputStream.png");
-
-            System.out.println("client connected");
-
-            int bytesRead;
-            byte[] buffer = new byte[4096];
-            while ((bytesRead = dis.read(buffer)) != -1) {
-                fos.write(buffer, 0, bytesRead);
+                // Hand off to a new thread to keep the main thread free for new connections
+                ClientHandler handler = new ClientHandler(clientSocket);
+                new Thread(handler).start();
             }
-
-            System.out.println("File received");
-
-
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.err.println("Server exception: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }
