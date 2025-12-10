@@ -6,40 +6,43 @@ import java.util.Scanner;
 
 public class Client {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
+        try (Socket client = new Socket("127.0.0.1", 45000)) {
 
-        try {
-            Socket client = new Socket("127.0.0.1", 45000);
+            System.out.println("Connected to server.");
 
-            System.out.println("We got in");
+            BufferedReader serverInput = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            PrintWriter serverOutput = new PrintWriter(client.getOutputStream(), true);
+            Scanner consoleInput = new Scanner(System.in);
 
-            //inputstream
-            InputStream inStream = client.getInputStream();
-            InputStreamReader reader = new InputStreamReader(inStream);
-            BufferedReader buffin = new BufferedReader(reader);
-            //outputstream
-            OutputStream outStream = client.getOutputStream();
-            PrintWriter out = new PrintWriter(outStream, true);
-
-            //write to socket
-            Scanner sc = new Scanner(System.in);
-            System.out.println("Your message :");
-            String message = sc.nextLine();
-            out.println(message);
-            //read from socket
-            String line = buffin.readLine();
-            System.out.println(line);
-
-            DataOutputStream dos = new DataOutputStream(client.getOutputStream());
-            FileInputStream fis = new FileInputStream("c://toSend//googleplayfeature2.png");
-
-            byte[] buffer = new byte[4096];
-            int bytesRead;
-            while ((bytesRead = fis.read(buffer)) != -1) {
-                dos.write(buffer, 0, bytesRead);
+            String welcomeMessage = serverInput.readLine();
+            if (welcomeMessage != null) {
+                System.out.println("Server: " + welcomeMessage);
             }
+
+            while (true) {
+                System.out.print("Enter command: ");
+                String command = consoleInput.nextLine();
+
+                if (command.trim().isEmpty()) {
+                    continue;
+                }
+                serverOutput.println(command);
+
+                if (command.equalsIgnoreCase("QUIT")) {
+                    System.out.println("Exiting client...");
+                    break;
+                }
+                String response = serverInput.readLine();
+                if (response == null) {
+                    System.out.println("Server closed connection.");
+                    break;
+                }
+                System.out.println(response.replace("\\n", "\n"));
+            }
+
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.err.println("Connection error: " + e.getMessage());
         }
     }
 }

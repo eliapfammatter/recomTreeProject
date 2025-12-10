@@ -1,40 +1,37 @@
 package commands;
 
 import recommendation.RecommendationStrategy;
+import recomTree.GenreTree;
 import java.util.List;
 
 public class Recommend implements Command {
+    private final GenreTree tree;
     private final RecommendationStrategy strategy;
 
-    public Recommend(RecommendationStrategy strategy) {
+    public Recommend(GenreTree tree, RecommendationStrategy strategy) {
+        this.tree = tree;
         this.strategy = strategy;
     }
 
     @Override
     public String execute(String args) {
-        // We ignore 'args' here because the strategy is already set in the constructor
-        // OR you could use 'args' to switch strategies dynamically if you preferred.
-
-        List<String> results = strategy.recommend();
+        // Pass the tree to the strategy
+        List<String> results = strategy.recommend(tree);
 
         if (results.isEmpty()) {
-            return "No recommendations available.";
+            return "No recommendations found.";
         }
 
         StringBuilder sb = new StringBuilder("Recommendations:\n");
-        for (String movie : results) {
-            sb.append("- ").append(movie).append("\n");
+        for (String s : results) {
+            sb.append("- ").append(s).append("\n");
         }
         return sb.toString();
     }
 
     @Override
-    public String getName() {
-        return "RECOMMEND";
-    }
+    public String getName() { return "RECOMMEND"; }
 
     @Override
-    public String getDescription() {
-        return "Gets movie recommendations.";
-    }
+    public String getDescription() { return "Gets recommendations based on a strategy."; }
 }

@@ -1,37 +1,50 @@
 package commands;
 
+import recomTree.GenreTree;
+import recomTree.Movie;
+import java.util.UUID;
+
 public class AddMovie implements Command {
+    private final GenreTree tree;
+
+    public AddMovie(GenreTree tree) {
+        this.tree = tree;
+    }
 
     @Override
     public String execute(String args) {
-        // Expecting args like: "Inception SciFi" or "The Matrix, Action"
         if (args == null || args.trim().isEmpty()) {
             return "Error: Usage is ADD_MOVIE <Title> <Genre>";
         }
 
-        // Simple split logic (assuming space or comma separation for now)
-        // In the final version, you might want more robust parsing for titles with spaces
         String[] parts = args.trim().split("[,\\s]+", 2);
-
         if (parts.length < 2) {
             return "Error: Missing Genre. Usage is ADD_MOVIE <Title> <Genre>";
         }
 
-        String title = parts[0];
-        String genre = parts[1];
+        String title = parts[0].trim();
+        String genre = parts[1].trim();
 
-        // TODO: Call tree.addMovie(title, genre) here
+        // Check if genre exists, if not, create it under Root
+        if (tree.findGenre(genre) == null) {
+            tree.addGenre("Root", genre);
+        }
 
-        return "SUCCESS: Added movie '" + title + "' to genre '" + genre + "'.";
+        // Create Movie (Generating a random ID and default year 2025 for now)
+        Movie movie = new Movie(UUID.randomUUID().toString(), title, 2025);
+
+        boolean success = tree.addMovieToGenre(genre, movie);
+
+        if (success) {
+            return "SUCCESS: Added '" + title + "' to '" + genre + "'.";
+        } else {
+            return "Error: Could not add movie. Genre might not exist.";
+        }
     }
 
     @Override
-    public String getName() {
-        return "ADD_MOVIE";
-    }
+    public String getName() { return "ADD_MOVIE"; }
 
     @Override
-    public String getDescription() {
-        return "Adds a movie to the catalog. Usage: ADD_MOVIE <Title> <Genre>";
-    }
+    public String getDescription() { return "Adds a movie. Usage: ADD_MOVIE <Title> <Genre>"; }
 }

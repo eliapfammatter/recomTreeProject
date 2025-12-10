@@ -1,45 +1,47 @@
 package commands;
 
+import recomTree.GenreTree;
+import recomTree.Movie;
+
 public class RateMovie implements Command {
+    private final GenreTree tree;
+
+    public RateMovie(GenreTree tree) {
+        this.tree = tree;
+    }
 
     @Override
     public String execute(String args) {
-        // Expecting args like: "Inception 5"
         if (args == null || args.trim().isEmpty()) {
-            return "Error: Usage is RATE_MOVIE <Title> <Rating (1-10)>";
+            return "Error: Usage is RATE_MOVIE <Title> <Rating>";
         }
 
         String[] parts = args.trim().split("[,\\s]+", 2);
-
         if (parts.length < 2) {
-            return "Error: Missing Rating. Usage is RATE_MOVIE <Title> <Rating>";
+            return "Error: Missing Rating.";
         }
 
-        String title = parts[0];
-        String ratingStr = parts[1];
-
+        String title = parts[0].trim();
         try {
-            int rating = Integer.parseInt(ratingStr);
-            if (rating < 1 || rating > 10) {
-                return "Error: Rating must be between 1 and 10.";
+            int rating = Integer.parseInt(parts[1].trim());
+            if (rating < 1 || rating > 10) return "Error: Rating must be 1-10.";
+
+            Movie movie = tree.findMovieByTitle(title);
+            if (movie == null) {
+                return "Error: Movie '" + title + "' not found.";
             }
 
-            // TODO: Call tree.rateMovie(title, rating) here
-
-            return "SUCCESS: Rated '" + title + "' - " + rating + "/10.";
+            movie.addRating(rating);
+            return "SUCCESS: Rated '" + title + "' now has average " + String.format("%.1f", movie.getAverageRating());
 
         } catch (NumberFormatException e) {
-            return "Error: Rating must be a number.";
+            return "Error: Invalid rating number.";
         }
     }
 
     @Override
-    public String getName() {
-        return "RATE_MOVIE";
-    }
+    public String getName() { return "RATE_MOVIE"; }
 
     @Override
-    public String getDescription() {
-        return "Rates a movie. Usage: RATE_MOVIE <Title> <Rating>";
-    }
+    public String getDescription() { return "Rates a movie. Usage: RATE_MOVIE <Title> <Rating>"; }
 }
