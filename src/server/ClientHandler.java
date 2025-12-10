@@ -22,9 +22,8 @@ public class ClientHandler implements Runnable {
             out.println("Welcome to RecomTree! Type HELP for commands.");
 
             while ((inputLine = in.readLine()) != null) {
-
                 String response = commandProcessor.process(inputLine);
-                out.println(response);
+                out.println(response.replace("\n", "\\n"));
 
                 if (inputLine.trim().equalsIgnoreCase("QUIT")) {
                     break;

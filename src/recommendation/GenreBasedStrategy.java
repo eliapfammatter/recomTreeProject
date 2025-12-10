@@ -1,23 +1,33 @@
 package recommendation;
 
+import recomTree.GenreNode;
+import recomTree.GenreTree;
+import recomTree.Movie;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GenreBasedStrategy implements RecommendationStrategy {
-    private String genre;
+    private final String targetGenre;
 
-    // We can pass parameters (like the requested genre) via the constructor
-    public GenreBasedStrategy(String genre) {
-        this.genre = genre;
+    public GenreBasedStrategy(String targetGenre) {
+        this.targetGenre = targetGenre;
     }
 
     @Override
-    public List<String> recommend() {
-        // Placeholder: Returns generic movies for the requested genre
-        List<String> movies = new ArrayList<>();
-        movies.add("Popular " + genre + " Movie 1");
-        movies.add("Classic " + genre + " Movie 2");
-        movies.add("New " + genre + " Release");
-        return movies;
+    public List<String> recommend(GenreTree tree) {
+        GenreNode node = tree.findGenre(targetGenre);
+
+        if (node == null) {
+            List<String> err = new ArrayList<>();
+            err.add("Genre '" + targetGenre + "' not found.");
+            return err;
+        }
+
+        // Return movies from this genre, formatted nicely
+        return node.getAllMovies().stream()
+                .limit(5)
+                .map(m -> m.getTitle() + " [" + m.getAverageRating() + "]")
+                .collect(Collectors.toList());
     }
 }

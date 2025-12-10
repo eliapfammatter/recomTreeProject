@@ -1,27 +1,33 @@
 package commands;
 
+import recomTree.GenreTree;
+import recomTree.Movie;
+
 public class SearchMovie implements Command {
+    private final GenreTree tree;
+
+    public SearchMovie(GenreTree tree) {
+        this.tree = tree;
+    }
 
     @Override
     public String execute(String args) {
         if (args == null || args.trim().isEmpty()) {
-            return "Error: Usage is SEARCH_MOVIE <Title>";
+            return "Error: Provide a movie title.";
         }
 
-        String title = args.trim();
+        Movie movie = tree.findMovieByTitle(args.trim());
 
-        // TODO: Call tree.search(title) here
-        // Placeholder response:
-        return "Searching for '" + title + "'... [Movie Found/Not Found]";
+        if (movie != null) {
+            return "Found: " + movie.getTitle() + " (" + movie.getYear() + ") - Rating: " + String.format("%.1f", movie.getAverageRating());
+        } else {
+            return "Movie '" + args.trim() + "' not found.";
+        }
     }
 
     @Override
-    public String getName() {
-        return "SEARCH_MOVIE";
-    }
+    public String getName() { return "SEARCH_MOVIE"; }
 
     @Override
-    public String getDescription() {
-        return "Searches for a movie details. Usage: SEARCH_MOVIE <Title>";
-    }
+    public String getDescription() { return "Searches for a movie."; }
 }
