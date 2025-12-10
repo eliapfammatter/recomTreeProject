@@ -56,7 +56,7 @@ public class GenreNode {
     }
 
     public List<Movie> getAllMovies() {
-        List<Movie> movies = new ArrayList<>();
+        List<Movie> movies = new ArrayList<>(this.movies);
         for (GenreNode child : children) {
             movies.addAll(child.getAllMovies());
         }
@@ -64,9 +64,40 @@ public class GenreNode {
     }
 
     public void addMovie(Movie movie) {
-        if(movie == null){
+        if(movie != null){
             movies.add(movie);
         }
     }
 
+    public GenreNode findSubGenre(String name){
+        if(this.name.equalsIgnoreCase(name)){
+            return this;
+        }
+
+        for (GenreNode child : children){
+            GenreNode found = child.findSubGenre(name);
+            if(found != null){
+                return found;
+            }
+        }
+
+        return null;
+    }
+
+    public Movie findMovie(String title){
+        for (Movie m : movies){
+            if(m.getTitle().equalsIgnoreCase(title)){
+                return m;
+            }
+        }
+
+        for(GenreNode child : children){
+            Movie m = child.findMovie(title);
+            if(m != null){
+                return m;
+            }
+        }
+
+        return null;
+    }
 }

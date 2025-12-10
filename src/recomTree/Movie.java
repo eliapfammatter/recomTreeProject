@@ -62,4 +62,10 @@ public class Movie {
                 ", title='" + title + '\'' +
                 '}';
     }
+
+    public void addRating(double newRating){
+        double totalScore = this.averageRating * this.ratingCount;
+        this.ratingCount++;
+        this.averageRating = (totalScore + newRating) / this.ratingCount;
+    }
 }
