@@ -1,18 +1,19 @@
 package commands;
 
 public class Quit implements Command {
-    @Override
-    public String execute() {
-        return "";
-    }
 
     @Override
-    public String getDescription() {
-        return "";
+    public String execute(String args) {
+        return "Goodbye! Closing connection...";
     }
 
     @Override
     public String getName() {
-        return "Quit";
+        return "QUIT";
+    }
+
+    @Override
+    public String getDescription() {
+        return "Disconnects from the server.";
     }
 }
