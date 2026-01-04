@@ -72,8 +72,8 @@ public class CommandProcessor {
         commandMap.put("RATE_MOVIE", new RateMovie(genreTree));
         commandMap.put("SEARCH_MOVIE", new SearchMovie(genreTree));
         commandMap.put("LIST_SUBTREE", new ListSubtree(genreTree));
-        commandMap.put("RECOMMEND_TOP", new Recommend(genreTree, new TopRatedStrategy()));
-        commandMap.put("RECOMMEND_GENRE", new Recommend(genreTree, new GenreBasedStrategy()));
+        commandMap.put("RECOMMEND_TOP", new Recommend(genreTree, new TopRatedStrategy(), "RECOMMEND_TOP"));
+        commandMap.put("RECOMMEND_GENRE", new Recommend(genreTree, new GenreBasedStrategy(), "RECOMMEND_GENRE"));
     }
 
     public String process(String input) {
