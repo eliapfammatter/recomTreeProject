@@ -7,10 +7,12 @@ import java.util.List;
 public class Recommend implements Command {
     private final GenreTree tree;
     private final RecommendationStrategy strategy;
+    private final String commandName;
 
-    public Recommend(GenreTree tree, RecommendationStrategy strategy) {
+    public Recommend(GenreTree tree, RecommendationStrategy strategy, String commandName) {
         this.tree = tree;
         this.strategy = strategy;
+        this.commandName = commandName;
     }
 
     @Override
@@ -35,8 +37,8 @@ public class Recommend implements Command {
     }
 
     @Override
-    public String getName() { return "RECOMMEND"; }
+    public String getName() { return commandName; }
 
     @Override
-    public String getDescription() { return "Gets recommendations based on a strategy. RECOMMEND_TOP for top rated movies or RECOMMEND_GENRE <Genre> for genre based movies"; }
+    public String getDescription() { return "Gets recommendations based on a strategy."; }
 }
