@@ -16,26 +16,34 @@ public class RateMovie implements Command {
             return "Error: Usage is RATE_MOVIE <Title> <Rating>";
         }
 
-        String[] parts = args.trim().split("[,\\s]+", 2);
-        if (parts.length < 2) {
-            return "Error: Missing Rating.";
+        String trimmedArgs = args.trim();
+
+        // Find the LAST space in the string
+        int lastSpaceIndex = trimmedArgs.lastIndexOf(' ');
+
+        if (lastSpaceIndex == -1) {
+            return "Error: Invalid format. Usage: RATE_MOVIE <Title> <Rating>";
         }
 
-        String title = parts[0].trim();
+        // Everything before the last space is the Title
+        String titlePart = trimmedArgs.substring(0, lastSpaceIndex).trim();
+        // Everything after the last space is the Rating
+        String ratingPart = trimmedArgs.substring(lastSpaceIndex + 1).trim();
+
         try {
-            int rating = Integer.parseInt(parts[1].trim());
+            int rating = Integer.parseInt(ratingPart);
             if (rating < 1 || rating > 10) return "Error: Rating must be 1-10.";
 
-            Movie movie = tree.findMovieByTitle(title);
+            Movie movie = tree.findMovieByTitle(titlePart);
             if (movie == null) {
-                return "Error: Movie '" + title + "' not found.";
+                return "Error: Movie '" + titlePart + "' not found.";
             }
 
             movie.addRating(rating);
-            return "SUCCESS: Rated '" + title + "' now has average " + String.format("%.1f", movie.getAverageRating());
+            return "SUCCESS: Rated '" + titlePart + "' now has average " + String.format("%.1f", movie.getAverageRating());
 
         } catch (NumberFormatException e) {
-            return "Error: Invalid rating number.";
+            return "Error: Invalid rating number. Ensure the rating is the last number.";
         }
     }
 
