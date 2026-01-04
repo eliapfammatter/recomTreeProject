@@ -8,14 +8,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class GenreBasedStrategy implements RecommendationStrategy {
-    private final String targetGenre;
-
-    public GenreBasedStrategy(String targetGenre) {
-        this.targetGenre = targetGenre;
-    }
 
     @Override
-    public List<String> recommend(GenreTree tree) {
+    public List<String> recommend(GenreTree tree, String args) {
+        if (args == null || args.trim().isEmpty()) {
+            List<String> err = new ArrayList<>();
+            err.add("Error: Please specify a genre (e.g., RECOMMEND_GENRE Action).");
+            return err;
+        }
+
+        String targetGenre = args.trim();
         GenreNode node = tree.findGenre(targetGenre);
 
         if (node == null) {
@@ -24,10 +26,9 @@ public class GenreBasedStrategy implements RecommendationStrategy {
             return err;
         }
 
-        // Return movies from this genre, formatted nicely
         return node.getAllMovies().stream()
                 .limit(5)
-                .map(m -> m.getTitle() + " [" + m.getAverageRating() + "]")
+                .map(m -> m.getTitle() + " [" + String.format("%.1f", m.getAverageRating()) + "]")
                 .collect(Collectors.toList());
     }
 }

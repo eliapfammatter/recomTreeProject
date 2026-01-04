@@ -15,11 +15,16 @@ public class Recommend implements Command {
 
     @Override
     public String execute(String args) {
-        // Pass the tree to the strategy
-        List<String> results = strategy.recommend(tree);
+        // Pass the user arguments (args) to the strategy
+        List<String> results = strategy.recommend(tree, args);
 
         if (results.isEmpty()) {
             return "No recommendations found.";
+        }
+
+        // Check if the result is an error message (simple check)
+        if (results.get(0).startsWith("Error:") || results.get(0).contains("not found")) {
+            return results.get(0);
         }
 
         StringBuilder sb = new StringBuilder("Recommendations:\n");
@@ -33,5 +38,5 @@ public class Recommend implements Command {
     public String getName() { return "RECOMMEND"; }
 
     @Override
-    public String getDescription() { return "Gets recommendations based on a strategy."; }
+    public String getDescription() { return "Gets recommendations based on a strategy. RECOMMEND_TOP for top rated movies or RECOMMEND_GENRE <Genre> for genre based movies"; }
 }
