@@ -58,7 +58,6 @@ public class CommandProcessor {
         addWithRating("Animation", "The Lion King", 1994, 8.5);
     }
 
-    // Helper to make adding movies cleaner
     private void addWithRating(String genre, String title, int year, double rating) {
         Movie movie = new Movie(UUID.randomUUID().toString(), title, year);
         movie.addRating(rating);
@@ -73,12 +72,7 @@ public class CommandProcessor {
         commandMap.put("RATE_MOVIE", new RateMovie(genreTree));
         commandMap.put("SEARCH_MOVIE", new SearchMovie(genreTree));
         commandMap.put("LIST_SUBTREE", new ListSubtree(genreTree));
-
-        // Strategies
         commandMap.put("RECOMMEND_TOP", new Recommend(genreTree, new TopRatedStrategy()));
-        // You can add shortcuts for specific genres if you want
-        commandMap.put("RECOMMEND_SCIFI", new Recommend(genreTree, new GenreBasedStrategy("SciFi")));
-        commandMap.put("RECOMMEND_ACTION", new Recommend(genreTree, new GenreBasedStrategy("Action")));
     }
 
     public String process(String input) {
